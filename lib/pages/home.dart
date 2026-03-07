@@ -276,9 +276,9 @@ class _DayOfWeekTabBar extends StatelessWidget implements PreferredSizeWidget {
             fontWeight: FontWeight.w500,
           ),
           labelPadding: EdgeInsets.zero,
-          overlayColor: WidgetStateProperty.resolveWith(
-            (states) => Colors.transparent,
-          ),
+          // resolveWith 대신 all을 사용하여 매 빌드마다
+          // 새 클로저를 생성하지 않도록 한다.
+          overlayColor: WidgetStateProperty.all(Colors.transparent),
           splashFactory: NoSplash.splashFactory,
           dividerHeight: 0,
           controller: tabController,
@@ -309,7 +309,9 @@ class _NestedPageScrollController extends PageController {
   void outerScrollStart(int pageIndex) {
     _reverseList.fillRange(0, pageIndex, true);
     if (pageIndex + 1 < pageCount) {
-      _reverseList.fillRange(pageIndex + 1, pageCount - 1, false);
+      // fillRange의 end는 exclusive이므로 pageCount를 사용해야
+      // 마지막 페이지까지 올바르게 채워진다.
+      _reverseList.fillRange(pageIndex + 1, pageCount, false);
     }
     notifyListeners();
   }
@@ -323,7 +325,9 @@ class _NestedPageScrollController extends PageController {
     final currentPage = this.page!.round();
     _reverseList.fillRange(0, currentPage, false);
     if (currentPage + 1 < pageCount) {
-      _reverseList.fillRange(currentPage + 1, pageCount - 1, false);
+      // fillRange의 end는 exclusive이므로 pageCount를 사용해야
+      // 마지막 페이지까지 올바르게 채워진다.
+      _reverseList.fillRange(currentPage + 1, pageCount, false);
     }
     notifyListeners();
     return super.animateToPage(page, duration: duration, curve: curve);
@@ -485,6 +489,10 @@ class _MealCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    // primaryContainer의 HSL 변환을 한 번만 수행하여 중복 계산 방지
+    final primaryHsl = HSLColor.fromColor(theme.colorScheme.primaryContainer);
+    final isLight = theme.brightness == Brightness.light;
+
     return Card.filled(
       color: theme.colorScheme.surfaceContainer,
       margin: EdgeInsetsGeometry.all(8),
@@ -499,11 +507,9 @@ class _MealCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ColoredBox(
-            color: HSLColor.fromColor(theme.colorScheme.primaryContainer)
+            color: primaryHsl
                 .withSaturation(0.5)
-                .withLightness(
-                  theme.brightness == Brightness.light ? 0.94 : 0.06,
-                )
+                .withLightness(isLight ? 0.94 : 0.06)
                 .toColor(),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -511,13 +517,10 @@ class _MealCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: theme.textTheme.titleSmall!.copyWith(
-                    color:
-                        HSLColor.fromColor(theme.colorScheme.primaryContainer)
-                            .withSaturation(0.8)
-                            .withLightness(
-                              theme.brightness == Brightness.light ? 0.3 : 0.7,
-                            )
-                            .toColor(),
+                    color: primaryHsl
+                        .withSaturation(0.8)
+                        .withLightness(isLight ? 0.3 : 0.7)
+                        .toColor(),
                   ),
                 ),
               ),
@@ -583,8 +586,13 @@ class _NestedPageScrollControllerGroup extends ChangeNotifier {
         pageCount: pageCount,
       );
 
+      // 매 스크롤 픽셀마다 호출되지만, 실제로 rounded 값이
+      // 바뀔 때만 대입하여 불필요한 연산을 줄인다.
       controller.addListener(() {
-        _page = controller.page!.round();
+        final rounded = controller.page!.round();
+        if (_page != rounded) {
+          _page = rounded;
+        }
       });
 
       return controller;
