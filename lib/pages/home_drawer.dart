@@ -160,7 +160,7 @@ class HomePageDrawer extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: EdgeInsets.only(left: 24, bottom: 12),
+                padding: EdgeInsets.only(left: 40, bottom: 12),
                 child: IconButton(
                   icon: Icon(Icons.copyright, color: Colors.white),
                   onPressed: () => showLicensePage(
