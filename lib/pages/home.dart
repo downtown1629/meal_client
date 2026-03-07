@@ -456,18 +456,28 @@ class _NestedPageScrollControllerGroup extends ChangeNotifier {
     // 불필요한 애니메이션 ticker 생성을 방지한다.
     int? activeIndex,
   }) async {
+    final futures = <Future<void>>[];
+
     for (int i = 0; i < _controllers.length; i++) {
       final controller = _controllers[i];
       if (!controller.hasClients) continue;
 
       if (activeIndex == null || i == activeIndex) {
-        // 현재 보이는 탭: 부드러운 애니메이션으로 이동
-        controller.animateToPage(page, duration: duration, curve: curve);
+        // 현재 보이는 탭의 애니메이션 완료 시점을 기다린다.
+        futures.add(
+          controller.animateToPage(page, duration: duration, curve: curve),
+        );
       } else {
         // 비활성 탭: 화면에 보이지 않으므로 즉시 이동 (ticker 낭비 없음)
         controller.jumpToPage(page);
       }
     }
+
+    if (futures.isEmpty) {
+      return;
+    }
+
+    await Future.wait(futures);
   }
 }
 
@@ -658,6 +668,10 @@ class _HomePageState extends State<HomePage>
   late final Future<WeekMeal> cachedMeal;
   late final Future<WeekMeal> downloadedMeal;
 
+  // 버튼으로 시작한 식사 전환 동안에는 상단 버튼 상태를 유지하고,
+  // 중간 onPageChanged가 버튼 상태를 다시 덮어쓰지 않게 한다.
+  bool _isMealOfDayButtonTransition = false;
+
   @override
   void initState() {
     final DateTime now;
@@ -807,16 +821,34 @@ class _HomePageState extends State<HomePage>
             ),
             actions: [
               _MealOfDaySwitchButton(
-                onPressed: () => setState(() {
-                  _model.mealOfDay = nextMealOfDay(_model.mealOfDay);
-                  _mealOfDayPageControllerGroup.animateToPage(
-                    _model.mealOfDay.index,
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.ease,
-                    // 현재 선택된 요일 탭만 애니메이션 처리
-                    activeIndex: _model.dayOfWeek.index,
-                  );
-                }),
+                onPressed: () async {
+                  final nextMeal = nextMealOfDay(_model.mealOfDay);
+
+                  setState(() {
+                    // 버튼은 누르자마자 다음 식사 상태로 바꿔 즉각적인 반응을 준다.
+                    _model.mealOfDay = nextMeal;
+                    _isMealOfDayButtonTransition = true;
+                  });
+
+                  try {
+                    await _mealOfDayPageControllerGroup.animateToPage(
+                      nextMeal.index,
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.ease,
+                      // 현재 선택된 요일 탭만 애니메이션 처리
+                      activeIndex: _model.dayOfWeek.index,
+                    );
+                  } finally {
+                    if (mounted) {
+                      setState(() {
+                        // 애니메이션이 끝나면 중간 페이지 무시 상태만 해제한다.
+                        _isMealOfDayButtonTransition = false;
+                      });
+                    } else {
+                      _isMealOfDayButtonTransition = false;
+                    }
+                  }
+                },
                 label: dayOfMealLabel,
                 icon: dayOfMealIcon,
               ),
@@ -849,11 +881,18 @@ class _HomePageState extends State<HomePage>
                       tabController: _tabController,
                       pageControllerGroup: _mealOfDayPageControllerGroup,
                       onPageChanged: (page) {
+                        if (_isMealOfDayButtonTransition) {
+                          // 버튼으로 시작한 전환 중에는 중간 페이지(예: 점심)를
+                          // 상단 버튼 상태에 반영하지 않는다.
+                          return;
+                        }
+
                         final nextMealOfDay = MealOfDay.values[page];
                         if (_model.mealOfDay == nextMealOfDay) {
                           return;
                         }
 
+                        // 수동 스와이프 전환은 기존처럼 즉시 버튼 상태에 반영한다.
                         setState(() {
                           _model.mealOfDay = nextMealOfDay;
                         });
