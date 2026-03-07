@@ -100,7 +100,7 @@ class HomePageDrawer extends StatelessWidget {
               padding: EdgeInsets.all(0),
               children: [
                 Container(
-                  height: 160,
+                  height: 130,
                   alignment: Alignment.bottomLeft,
                   margin: EdgeInsets.only(bottom: 50, left: 40),
                   child: SvgPicture.asset('assets/imgs/bapu_logo.svg', height: 36),
@@ -160,7 +160,7 @@ class HomePageDrawer extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: EdgeInsets.only(left: 40, bottom: 12),
+                padding: EdgeInsets.only(left: 28, bottom: 12),
                 child: IconButton(
                   icon: Icon(Icons.copyright, color: Colors.white),
                   onPressed: () => showLicensePage(

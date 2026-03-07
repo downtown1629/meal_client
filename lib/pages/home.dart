@@ -109,7 +109,7 @@ class _DayOfWeekTabBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           labelStyle: theme.textTheme.titleSmall!.copyWith(
             fontSize: 16,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
           labelPadding: EdgeInsets.zero,
           // resolveWith 대신 all을 사용하여 매 빌드마다
@@ -392,7 +392,7 @@ class _MealCard extends StatelessWidget {
                     ? const SizedBox()
                     : Text(
                         "${meal.kcal} kcal",
-                        style: theme.textTheme.labelMedium,
+                        style: theme.textTheme.labelSmall,
                       ),
               ),
             ),
@@ -526,6 +526,16 @@ class _WeekMealTabBarView extends StatelessWidget {
                           if (meals == nowMeal.dormitory) {
                             title = string.dormitoryCafeteria
                                 .getLocalizedString(language);
+
+                            // 한식, 할랄 표기는 기숙사 식당에 한정하여 표기한다.
+                            switch (meal) {
+                              case KoreanMeal _:
+                                title +=
+                                " ${string.menuKorean.getLocalizedString(language)}";
+                              case HalalMeal _:
+                                title +=
+                                " ${string.menuHalal.getLocalizedString(language)}";
+                            }
                           } else if (meals == nowMeal.student) {
                             title = string.studentCafeteria.getLocalizedString(
                               language,
@@ -536,14 +546,7 @@ class _WeekMealTabBarView extends StatelessWidget {
                             );
                           }
 
-                          switch (meal) {
-                            case KoreanMeal _:
-                              title +=
-                                  " ${string.menuKorean.getLocalizedString(language)}";
-                            case HalalMeal _:
-                              title +=
-                                  " ${string.menuHalal.getLocalizedString(language)}";
-                          }
+
 
                           return GestureDetector(
                             onLongPress: () {
