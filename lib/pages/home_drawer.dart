@@ -165,9 +165,8 @@ class HomePageDrawer extends StatelessWidget {
                   icon: Icon(Icons.copyright, color: Colors.white),
                   onPressed: () => showLicensePage(
                     context: context,
-                    applicationName: "BapU",
                     applicationLegalese:
-                        "Source code: https://github.com/HeXA-UNIST/meal_client",
+                        "GPL-2.0 license. Source code: https://github.com/HeXA-UNIST/meal_client",
                   ),
                 ),
               ),
