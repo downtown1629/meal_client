@@ -93,74 +93,85 @@ class HomePageDrawer extends StatelessWidget {
       backgroundColor: brightness == Brightness.light
           ? theme.colorScheme.primaryContainer
           : theme.colorScheme.surfaceContainer,
-      child: ListView(
-        padding: EdgeInsets.all(0),
+      child: Column(
         children: [
-          Container(
-            height: 160,
-            alignment: Alignment.bottomLeft,
-            margin: EdgeInsets.only(bottom: 50, left: 40),
-            child: SvgPicture.asset('assets/imgs/bapu_logo.svg', height: 36),
-          ),
-          _DrawerItem(
-            icon: Icons.notifications_active,
-            title: string.announcement.getLocalizedString(language),
-            onTap: () async {
-              Navigator.of(context).pop();
-              final sharedPreferences = await SharedPreferences.getInstance();
-              final announcement = sharedPreferences.getString("announceTime");
-              if (announcement != null && context.mounted) {
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (BuildContext context) {
-                    return HomeAnnouncementDialog(
-                      close: string.close.getLocalizedString(language),
-                      title: string.announcement.getLocalizedString(language),
-                      content: announcement,
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.all(0),
+              children: [
+                Container(
+                  height: 160,
+                  alignment: Alignment.bottomLeft,
+                  margin: EdgeInsets.only(bottom: 50, left: 40),
+                  child: SvgPicture.asset('assets/imgs/bapu_logo.svg', height: 36),
+                ),
+                _DrawerItem(
+                  icon: Icons.notifications_active,
+                  title: string.announcement.getLocalizedString(language),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    final sharedPreferences = await SharedPreferences.getInstance();
+                    final announcement = sharedPreferences.getString("announceTime");
+                    if (announcement != null && context.mounted) {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return HomeAnnouncementDialog(
+                            close: string.close.getLocalizedString(language),
+                            title: string.announcement.getLocalizedString(language),
+                            content: announcement,
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
+                _DrawerItem(
+                  icon: Icons.info,
+                  title: string.operationhours.getLocalizedString(language),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return HomeAnnouncementDialog(
+                          close: string.close.getLocalizedString(language),
+                          title: string.operationhours.getLocalizedString(language),
+                          content: string.operationhourscontent.getLocalizedString(
+                            language,
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              }
-            },
-          ),
-          _DrawerItem(
-            icon: Icons.info,
-            title: string.operationhours.getLocalizedString(language),
-            onTap: () {
-              Navigator.of(context).pop();
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return HomeAnnouncementDialog(
-                    close: string.close.getLocalizedString(language),
-                    title: string.operationhours.getLocalizedString(language),
-                    content: string.operationhourscontent.getLocalizedString(
-                      language,
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-          _DrawerItem(
-            icon: Icons.help_outline_outlined,
-            title: string.contactdeveloper.getLocalizedString(language),
-            onTap: () async =>
-                await launchUrl(Uri.parse("https://pf.kakao.com/_xcaYlxj")),
-          ),
-          _DrawerItem(
-            icon: Icons.code,
-            title: string.sourcecode.getLocalizedString(language),
-            onTap: () async => await launchUrl(
-              Uri.parse("https://github.com/HeXA-UNIST/meal_client"),
+                ),
+                _DrawerItem(
+                  icon: Icons.help_outline_outlined,
+                  title: string.contactdeveloper.getLocalizedString(language),
+                  onTap: () async =>
+                      await launchUrl(Uri.parse("https://pf.kakao.com/_xcaYlxj")),
+                ),
+              ],
             ),
           ),
-          _DrawerItem(
-            icon: Icons.copyright,
-            title: string.ossLicense.getLocalizedString(language),
-            onTap: () => showLicensePage(context: context),
+          SafeArea(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 24, bottom: 12),
+                child: IconButton(
+                  icon: Icon(Icons.copyright, color: Colors.white),
+                  onPressed: () => showLicensePage(
+                    context: context,
+                    applicationName: "BapU",
+                    applicationLegalese:
+                        "Source code: https://github.com/HeXA-UNIST/meal_client",
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
