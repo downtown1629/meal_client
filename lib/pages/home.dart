@@ -688,9 +688,16 @@ class _HomePageState extends State<HomePage>
     );
     _tabController.index = _model.dayOfWeek.index;
     _tabController.addListener(
-      () => setState(() {
-        _model.dayOfWeek = DayOfWeek.values[_tabController.index];
-      }),
+      () {
+        final nextDayOfWeek = DayOfWeek.values[_tabController.index];
+        if (_model.dayOfWeek == nextDayOfWeek) {
+          return;
+        }
+
+        setState(() {
+          _model.dayOfWeek = nextDayOfWeek;
+        });
+      },
     );
 
     _mealOfDayPageControllerGroup = _NestedPageScrollControllerGroup(
@@ -841,9 +848,16 @@ class _HomePageState extends State<HomePage>
                           : cacheSnapshot.data!,
                       tabController: _tabController,
                       pageControllerGroup: _mealOfDayPageControllerGroup,
-                      onPageChanged: (page) => setState(
-                        () => _model.mealOfDay = MealOfDay.values[page],
-                      ),
+                      onPageChanged: (page) {
+                        final nextMealOfDay = MealOfDay.values[page];
+                        if (_model.mealOfDay == nextMealOfDay) {
+                          return;
+                        }
+
+                        setState(() {
+                          _model.mealOfDay = nextMealOfDay;
+                        });
+                      },
                       language: bapu.language,
                     ),
                   );
