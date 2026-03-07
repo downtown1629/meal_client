@@ -606,10 +606,22 @@ class _NestedPageScrollControllerGroup extends ChangeNotifier {
     int page, {
     required Duration duration,
     required Cubic curve,
+    // 현재 화면에 보이는 탭의 인덱스.
+    // 이 탭의 컨트롤러만 애니메이션으로 이동하고,
+    // 나머지 비활성 탭은 jumpToPage로 즉시 동기화하여
+    // 불필요한 애니메이션 ticker 생성을 방지한다.
+    int? activeIndex,
   }) async {
-    for (var controller in _controllers) {
-      if (controller.hasClients) {
+    for (int i = 0; i < _controllers.length; i++) {
+      final controller = _controllers[i];
+      if (!controller.hasClients) continue;
+
+      if (activeIndex == null || i == activeIndex) {
+        // 현재 보이는 탭: 부드러운 애니메이션으로 이동
         controller.animateToPage(page, duration: duration, curve: curve);
+      } else {
+        // 비활성 탭: 화면에 보이지 않으므로 즉시 이동 (ticker 낭비 없음)
+        controller.jumpToPage(page);
       }
     }
   }
@@ -950,6 +962,8 @@ class _HomePageState extends State<HomePage>
                     _model.mealOfDay.index,
                     duration: Duration(milliseconds: 300),
                     curve: Curves.ease,
+                    // 현재 선택된 요일 탭만 애니메이션 처리
+                    activeIndex: _model.dayOfWeek.index,
                   );
                 }),
                 label: dayOfMealLabel,
