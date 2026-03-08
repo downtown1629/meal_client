@@ -208,7 +208,13 @@ class _NestedPageScrollViewState extends State<_NestedPageScrollView> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Listener(
+      onPointerSignal: (event) {
+        if (event is PointerScrollEvent) {
+          _handlePointerScroll(event);
+        }
+      },
+      child: GestureDetector(
       onVerticalDragStart: (details) {
         final mediaQuery = MediaQuery.of(context);
         if (details.globalPosition.dy >=
@@ -311,7 +317,51 @@ class _NestedPageScrollViewState extends State<_NestedPageScrollView> {
           );
         },
       ),
+    ),
     );
+  }
+
+  void _handlePointerScroll(PointerScrollEvent event) {
+    final dy = event.scrollDelta.dy;
+    if (dy == 0) return;
+
+    final pageIndex = widget.controller.page!.round();
+    final sc = scrollControllers[pageIndex];
+    final reversed = widget.controller.pageReversed(pageIndex);
+
+    final double scrollableRemaining;
+    if (dy > 0) {
+      // 아래로 스크롤
+      scrollableRemaining = reversed
+          ? sc.position.pixels - sc.position.minScrollExtent
+          : sc.position.maxScrollExtent - sc.position.pixels;
+    } else {
+      // 위로 스크롤
+      scrollableRemaining = reversed
+          ? sc.position.maxScrollExtent - sc.position.pixels
+          : sc.position.pixels - sc.position.minScrollExtent;
+    }
+
+    if (scrollableRemaining > 0) {
+      // 내부 스크롤 여유 있음
+      final clampedDy = dy.clamp(-scrollableRemaining, scrollableRemaining);
+      sc.jumpTo(sc.offset + (reversed ? -clampedDy : clampedDy));
+    } else {
+      // 내부 끝 → 페이지(끼니) 전환
+      if (dy > 0 && pageIndex < widget.controller.pageCount - 1) {
+        widget.controller.animateToPage(
+          pageIndex + 1,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      } else if (dy < 0 && pageIndex > 0) {
+        widget.controller.animateToPage(
+          pageIndex - 1,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
   }
 }
 
