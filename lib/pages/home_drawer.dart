@@ -206,13 +206,6 @@ class HomePageDrawer extends StatelessWidget {
             onTap: () async =>
                 await launchUrl(Uri.parse("https://pf.kakao.com/_xcaYlxj")),
           ),
-          _DrawerItem(
-            icon: Icons.translate,
-            title: string.language.getLocalizedString(language),
-            onTap: () {
-              // TODO: 언어 변경 기능
-            },
-          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 40, vertical: 24),
             child: Divider(color: Colors.white54, height: 1),
