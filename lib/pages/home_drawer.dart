@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../i18n.dart';
 import '../model.dart';
 import '../string.dart' as string;
 
@@ -80,6 +81,81 @@ class _DrawerItem extends StatelessWidget {
   }
 }
 
+class _OperationHoursSection extends StatelessWidget {
+  final Language language;
+
+  const _OperationHoursSection({required this.language});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            string.operationhours.getLocalizedString(language),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 16),
+          _CafeteriaHours(
+            name: string.dormitoryCafeteria.getLocalizedString(language),
+            hours: ['08:00 - 09:20', '11:30 - 13:30', '17:30 - 19:00'],
+          ),
+          SizedBox(height: 12),
+          _CafeteriaHours(
+            name: string.studentCafeteria.getLocalizedString(language),
+            hours: ['11:00 - 13:30', '17:00 - 19:00'],
+          ),
+          SizedBox(height: 12),
+          _CafeteriaHours(
+            name: string.diningHall.getLocalizedString(language),
+            hours: ['11:30 - 13:30', '17:30 - 19:30'],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CafeteriaHours extends StatelessWidget {
+  final String name;
+  final List<String> hours;
+
+  const _CafeteriaHours({required this.name, required this.hours});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          name,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        SizedBox(height: 4),
+        ...hours.map(
+          (h) => Text(
+            h,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class HomePageDrawer extends StatelessWidget {
   const HomePageDrawer({super.key});
 
@@ -93,74 +169,65 @@ class HomePageDrawer extends StatelessWidget {
       backgroundColor: brightness == Brightness.light
           ? theme.colorScheme.primaryContainer
           : theme.colorScheme.surfaceContainer,
-      child: Column(
+      child: ListView(
+        padding: EdgeInsets.zero,
         children: [
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(0),
-              children: [
-                Container(
-                  height: 160,
-                  alignment: Alignment.bottomLeft,
-                  margin: EdgeInsets.only(bottom: 50, left: 40),
-                  child: SvgPicture.asset('assets/imgs/bapu_logo.svg', height: 36),
-                ),
-                _DrawerItem(
-                  icon: Icons.notifications_active,
-                  title: string.announcement.getLocalizedString(language),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    final sharedPreferences = await SharedPreferences.getInstance();
-                    final announcement = sharedPreferences.getString("announceTime");
-                    if (announcement != null && context.mounted) {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (BuildContext context) {
-                          return HomeAnnouncementDialog(
-                            close: string.close.getLocalizedString(language),
-                            title: string.announcement.getLocalizedString(language),
-                            content: announcement,
-                          );
-                        },
-                      );
-                    }
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.info,
-                  title: string.operationhours.getLocalizedString(language),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (BuildContext context) {
-                        return HomeAnnouncementDialog(
-                          close: string.close.getLocalizedString(language),
-                          title: string.operationhours.getLocalizedString(language),
-                          content: string.operationhourscontent.getLocalizedString(
-                            language,
-                          ),
-                        );
-                      },
+          Container(
+            height: 160,
+            alignment: Alignment.bottomLeft,
+            margin: EdgeInsets.only(bottom: 50, left: 40),
+            child: SvgPicture.asset('assets/imgs/bapu_logo.svg', height: 36),
+          ),
+          _DrawerItem(
+            icon: Icons.notifications_active,
+            title: string.announcement.getLocalizedString(language),
+            onTap: () async {
+              Navigator.of(context).pop();
+              final sharedPreferences = await SharedPreferences.getInstance();
+              final announcement = sharedPreferences.getString("announceTime");
+              if (announcement != null && context.mounted) {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return HomeAnnouncementDialog(
+                      close: string.close.getLocalizedString(language),
+                      title: string.announcement.getLocalizedString(language),
+                      content: announcement,
                     );
                   },
-                ),
-                _DrawerItem(
-                  icon: Icons.help_outline_outlined,
-                  title: string.contactdeveloper.getLocalizedString(language),
-                  onTap: () async =>
-                      await launchUrl(Uri.parse("https://pf.kakao.com/_xcaYlxj")),
-                ),
-              ],
-            ),
+                );
+              }
+            },
+          ),
+          _DrawerItem(
+            icon: Icons.help_outline_outlined,
+            title: string.contactdeveloper.getLocalizedString(language),
+            onTap: () async =>
+                await launchUrl(Uri.parse("https://pf.kakao.com/_xcaYlxj")),
+          ),
+          _DrawerItem(
+            icon: Icons.translate,
+            title: string.language.getLocalizedString(language),
+            onTap: () {
+              // TODO: 언어 변경 기능
+            },
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 24),
+            child: Divider(color: Colors.white54, height: 1),
+          ),
+          _OperationHoursSection(language: language),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 24),
+            child: Divider(color: Colors.white54, height: 1),
           ),
           SafeArea(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: EdgeInsets.only(left: 40, bottom: 12),
+            top: false,
+            child: Padding(
+              padding: EdgeInsets.only(left: 40, bottom: 12),
+              child: Align(
+                alignment: Alignment.centerLeft,
                 child: IconButton(
                   icon: Icon(Icons.copyright, color: Colors.white),
                   onPressed: () => showLicensePage(
