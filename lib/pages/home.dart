@@ -369,7 +369,7 @@ class _MealCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   meal.menu[index ~/ 2],
-                  style: theme.textTheme.bodyMedium,
+                  style: theme.textTheme.bodyMedium!.copyWith(height: 1.05),
                 ),
               );
             } else {
@@ -392,7 +392,8 @@ class _MealCard extends StatelessWidget {
                     ? const SizedBox()
                     : Text(
                         "${meal.kcal} kcal",
-                        style: theme.textTheme.labelSmall,
+                        style: theme.textTheme.labelMedium!.copyWith(
+                            fontSize: 11.5, letterSpacing: 0.1),
                       ),
               ),
             ),
