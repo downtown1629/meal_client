@@ -168,6 +168,17 @@ class _NestedPageScrollController extends PageController {
     notifyListeners();
     return super.animateToPage(page, duration: duration, curve: curve);
   }
+
+  /// [outerScrollStart]로 reverse를 설정한 뒤 페이지를 전환한다.
+  /// 스크롤 방향에 따라 이전 페이지의 하단/상단이 자연스럽게 보인다.
+  Future<void> animateToPageFromScroll(
+    int page, {
+    required Duration duration,
+    required Curve curve,
+  }) {
+    outerScrollStart(this.page!.round());
+    return super.animateToPage(page, duration: duration, curve: curve);
+  }
 }
 
 enum _CurrentlyScrolling { inner, outer }
@@ -194,6 +205,7 @@ class _NestedPageScrollViewState extends State<_NestedPageScrollView> {
   int? currentPageIndex;
   double prevPage = 0;
   _CurrentlyScrolling? currentlyScrolling;
+  bool _isAnimatingPage = false;
 
   @override
   void initState() {
@@ -323,7 +335,7 @@ class _NestedPageScrollViewState extends State<_NestedPageScrollView> {
 
   void _handlePointerScroll(PointerScrollEvent event) {
     final dy = event.scrollDelta.dy;
-    if (dy == 0) return;
+    if (dy == 0 || _isAnimatingPage) return;
 
     final pageIndex = widget.controller.page!.round();
     final sc = scrollControllers[pageIndex];
@@ -348,19 +360,28 @@ class _NestedPageScrollViewState extends State<_NestedPageScrollView> {
       sc.jumpTo(sc.offset + (reversed ? -clampedDy : clampedDy));
     } else {
       // 내부 끝 → 페이지(끼니) 전환
+      final int targetPage;
       if (dy > 0 && pageIndex < widget.controller.pageCount - 1) {
-        widget.controller.animateToPage(
-          pageIndex + 1,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
+        targetPage = pageIndex + 1;
       } else if (dy < 0 && pageIndex > 0) {
-        widget.controller.animateToPage(
-          pageIndex - 1,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
+        targetPage = pageIndex - 1;
+      } else {
+        return;
       }
+      // 터치 드래그와 동일하게 다른 페이지의 내부 스크롤을 리셋
+      for (var c in scrollControllers) {
+        if (c != sc && c.hasClients) {
+          c.jumpTo(0);
+        }
+      }
+      _isAnimatingPage = true;
+      widget.controller
+          .animateToPageFromScroll(
+            targetPage,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          )
+          .then((_) => _isAnimatingPage = false);
     }
   }
 }
