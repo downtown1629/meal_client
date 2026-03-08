@@ -114,7 +114,7 @@ class _OperationHoursSection extends StatelessWidget {
           ),
           SizedBox(height: 12),
           _OperationHoursEntry(
-            name: string.diningHall.getLocalizedString(language),
+            name: string.facultyCafeteria.getLocalizedString(language),
             hours: ['11:30 - 13:30', '17:30 - 19:30'],
           ),
         ],

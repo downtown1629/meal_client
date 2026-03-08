@@ -653,7 +653,7 @@ class _WeekMealTabBarView extends StatelessWidget {
                               language,
                             );
                           } else if (meals == nowMeal.faculty) {
-                            title = string.diningHall.getLocalizedString(
+                            title = string.facultyCafeteria.getLocalizedString(
                               language,
                             );
                           }

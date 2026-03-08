@@ -107,7 +107,7 @@ const operationhourscontent = MultiLanguageString(
 
 const dormitoryCafeteria = MultiLanguageString(eng: "Dormitory", kor: "기숙사 식당");
 const studentCafeteria = MultiLanguageString(eng: "Student", kor: "학생 식당");
-const diningHall = MultiLanguageString(eng: "Dining Hall", kor: "교직원 식당");
+const facultyCafeteria = MultiLanguageString(eng: "Faculty", kor: "교직원 식당");
 
 const menuKorean = MultiLanguageString(eng: "Korean", kor: "한식");
 const menuHalal = MultiLanguageString(eng: "Halal", kor: "할랄");
