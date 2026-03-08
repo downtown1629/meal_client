@@ -124,6 +124,11 @@ class _DayOfWeekTabBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
+/// 끼니(아침/점심/저녁) 페이지 전환을 담당하는 PageController.
+///
+/// 스크롤 방향에 따라 각 페이지의 [reverse] 상태를 관리하여,
+/// 위로 스크롤해서 이전 페이지로 갈 때는 해당 페이지의 하단이,
+/// 아래로 스크롤해서 다음 페이지로 갈 때는 상단이 먼저 보이도록 한다.
 class _NestedPageScrollController extends PageController {
   final int pageCount;
   final List<bool> _reverseList;
@@ -183,6 +188,36 @@ class _NestedPageScrollController extends PageController {
 
 enum _CurrentlyScrolling { inner, outer }
 
+/// 끼니(아침/점심/저녁) 간 페이지 전환과 각 페이지 내부 콘텐츠 스크롤을
+/// 하나의 위젯에서 통합 처리하는 중첩 스크롤 뷰.
+///
+/// ## 스크롤 입력 처리 구조
+///
+/// 두 가지 입력 경로를 분리하여 각각 최적화된 방식으로 처리한다:
+///
+/// ### 1. 터치 드래그 (모바일, 터치스크린) — [GestureDetector]
+/// - [onVerticalDragStart]: 드래그 시작 시 내부(콘텐츠) vs 외부(페이지) 중
+///   어느 쪽을 스크롤할지 결정한다. 내부 콘텐츠가 스크롤 끝에 도달한 상태면
+///   외부(페이지 전환)로, 아니면 내부 스크롤로 시작한다.
+/// - [onVerticalDragUpdate]: 외부 스크롤 중 페이지 경계를 넘어
+///   다음 페이지에 도달하면, 드래그를 내부 스크롤로 자연스럽게 전환하여
+///   연속적인 스크롤 경험을 제공한다.
+/// - [onVerticalDragEnd]: 드래그 종료 시 물리 시뮬레이션(fling)을 적용하고
+///   상태를 정리한다.
+///
+/// ### 2. 포인터 스크롤 (마우스 휠, 터치패드) — [Listener.onPointerSignal]
+/// - [_handlePointerScroll]에서 처리한다.
+/// - 터치 드래그와 달리 연속적인 드래그 세션이 없으므로, 매 이벤트마다
+///   독립적으로 내부 스크롤 여유분을 계산하여 내부/외부를 판단한다.
+/// - 내부 스크롤 여유가 있으면 콘텐츠를 스크롤하고, 끝에 도달하면
+///   페이지 전환 애니메이션을 실행한다.
+/// - 페이지 전환 애니메이션 중에는 추가 입력을 무시하여
+///   중복 전환을 방지한다 ([_isAnimatingPage]).
+///
+/// ### PageView의 NeverScrollableScrollPhysics
+/// [PageView]와 내부 [SingleChildScrollView] 모두
+/// [NeverScrollableScrollPhysics]를 사용하여 Flutter 기본 스크롤을 비활성화하고,
+/// 위의 두 입력 경로가 스크롤을 완전히 제어한다.
 class _NestedPageScrollView extends StatefulWidget {
   const _NestedPageScrollView({
     super.key,
@@ -333,6 +368,11 @@ class _NestedPageScrollViewState extends State<_NestedPageScrollView> {
     );
   }
 
+  /// 마우스 휠·터치패드의 [PointerScrollEvent]를 처리한다.
+  ///
+  /// 터치 드래그([GestureDetector])와 달리 연속적인 세션이 없으므로,
+  /// 매 이벤트마다 현재 페이지의 내부 스크롤 잔여량을 계산하여
+  /// 콘텐츠 스크롤과 페이지 전환 중 어느 동작을 수행할지 독립적으로 결정한다.
   void _handlePointerScroll(PointerScrollEvent event) {
     final dy = event.scrollDelta.dy;
     if (dy == 0 || _isAnimatingPage) return;
