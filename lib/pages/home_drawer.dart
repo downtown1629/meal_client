@@ -102,17 +102,17 @@ class _OperationHoursSection extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16),
-          _CafeteriaHours(
+          _OperationHoursEntry(
             name: string.dormitoryCafeteria.getLocalizedString(language),
             hours: ['08:00 - 09:20', '11:30 - 13:30', '17:30 - 19:00'],
           ),
           SizedBox(height: 12),
-          _CafeteriaHours(
+          _OperationHoursEntry(
             name: string.studentCafeteria.getLocalizedString(language),
             hours: ['11:00 - 13:30', '17:00 - 19:00'],
           ),
           SizedBox(height: 12),
-          _CafeteriaHours(
+          _OperationHoursEntry(
             name: string.diningHall.getLocalizedString(language),
             hours: ['11:30 - 13:30', '17:30 - 19:30'],
           ),
@@ -122,11 +122,11 @@ class _OperationHoursSection extends StatelessWidget {
   }
 }
 
-class _CafeteriaHours extends StatelessWidget {
+class _OperationHoursEntry extends StatelessWidget {
   final String name;
   final List<String> hours;
 
-  const _CafeteriaHours({required this.name, required this.hours});
+  const _OperationHoursEntry({required this.name, required this.hours});
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +146,7 @@ class _CafeteriaHours extends StatelessWidget {
             h,
             style: TextStyle(
               fontSize: 15,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w300,
               color: Colors.white,
             ),
           ),
