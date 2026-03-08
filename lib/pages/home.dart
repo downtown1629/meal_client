@@ -440,13 +440,13 @@ class _MealCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   meal.menu[index ~/ 2],
-                  style: theme.textTheme.bodyMedium!.copyWith(height: 1.05),
+                  style: theme.textTheme.bodyMedium!.copyWith(height: 1.1),
                 ),
               );
             } else {
               return Text(
                 "",
-                style: theme.textTheme.bodyMedium!.copyWith(height: 0.4),
+                style: theme.textTheme.bodyMedium!.copyWith(height: 0.6),
               );
             }
           }, growable: false),
