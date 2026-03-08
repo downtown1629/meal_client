@@ -93,15 +93,16 @@ String getLocalizedDate(int month, int day, Language lang) {
   return date;
 }
 
+// Outdated. Still hardcoded in home_drawer.dart.
 const operationhourscontent = MultiLanguageString(
   eng:
       "Dormitory\n Breakfast 08:00 ~ 09:20\n Lunch 11:30 ~ 13:30\n Dinner 17:30 ~ 19:00\n\n"
       "Student\n Lunch 11:00 ~ 13:30\n Dinner 17:00 ~ 19:00\n\n"
-      "Faculty\n Lunch 11:30 ~ 13:30\n Dinner 17:30 ~ 19:30",
+      "Faculty\n Lunch 11:00 ~ 13:00\n Dinner 17:30 ~ 19:30",
   kor:
       "기숙사식당\n 아침 08:00 ~ 09:20\n 점심 11:30 ~ 13:30\n 저녁 17:30 ~ 19:00\n\n"
       "학생식당\n 점심 11:00 ~ 13:30\n 저녁 17:00 ~ 19:00\n\n"
-      "교직원식당\n 점심 11:30 ~ 13:30\n 저녁 17:30 ~ 19:30",
+      "교직원식당\n 점심 11:00 ~ 13:00\n 저녁 17:30 ~ 19:30",
 );
 
 const dormitoryCafeteria = MultiLanguageString(eng: "Dormitory", kor: "기숙사 식당");
