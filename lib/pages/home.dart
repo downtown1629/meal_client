@@ -194,6 +194,7 @@ class _NestedPageScrollViewState extends State<_NestedPageScrollView> {
   int? currentPageIndex;
   double prevPage = 0;
   _CurrentlyScrolling? currentlyScrolling;
+  bool _isAnimatingPage = false;
 
   @override
   void initState() {
@@ -323,7 +324,7 @@ class _NestedPageScrollViewState extends State<_NestedPageScrollView> {
 
   void _handlePointerScroll(PointerScrollEvent event) {
     final dy = event.scrollDelta.dy;
-    if (dy == 0) return;
+    if (dy == 0 || _isAnimatingPage) return;
 
     final pageIndex = widget.controller.page!.round();
     final sc = scrollControllers[pageIndex];
@@ -348,19 +349,22 @@ class _NestedPageScrollViewState extends State<_NestedPageScrollView> {
       sc.jumpTo(sc.offset + (reversed ? -clampedDy : clampedDy));
     } else {
       // 내부 끝 → 페이지(끼니) 전환
+      final int targetPage;
       if (dy > 0 && pageIndex < widget.controller.pageCount - 1) {
-        widget.controller.animateToPage(
-          pageIndex + 1,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
+        targetPage = pageIndex + 1;
       } else if (dy < 0 && pageIndex > 0) {
-        widget.controller.animateToPage(
-          pageIndex - 1,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
+        targetPage = pageIndex - 1;
+      } else {
+        return;
       }
+      _isAnimatingPage = true;
+      widget.controller
+          .animateToPage(
+            targetPage,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          )
+          .then((_) => _isAnimatingPage = false);
     }
   }
 }
