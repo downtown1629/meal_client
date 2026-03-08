@@ -168,6 +168,17 @@ class _NestedPageScrollController extends PageController {
     notifyListeners();
     return super.animateToPage(page, duration: duration, curve: curve);
   }
+
+  /// [outerScrollStart]로 reverse를 설정한 뒤 페이지를 전환한다.
+  /// 스크롤 방향에 따라 이전 페이지의 하단/상단이 자연스럽게 보인다.
+  Future<void> animateToPageFromScroll(
+    int page, {
+    required Duration duration,
+    required Curve curve,
+  }) {
+    outerScrollStart(this.page!.round());
+    return super.animateToPage(page, duration: duration, curve: curve);
+  }
 }
 
 enum _CurrentlyScrolling { inner, outer }
@@ -357,9 +368,15 @@ class _NestedPageScrollViewState extends State<_NestedPageScrollView> {
       } else {
         return;
       }
+      // 터치 드래그와 동일하게 다른 페이지의 내부 스크롤을 리셋
+      for (var c in scrollControllers) {
+        if (c != sc && c.hasClients) {
+          c.jumpTo(0);
+        }
+      }
       _isAnimatingPage = true;
       widget.controller
-          .animateToPage(
+          .animateToPageFromScroll(
             targetPage,
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
