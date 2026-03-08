@@ -18,7 +18,6 @@ void main() {
       create: (context) {
         final platformDispatcher = PlatformDispatcher.instance;
         final Language language;
-        // ignore: dead_code
         if ( /* platformDispatcher.locale.languageCode == "ko" */ true) {
           language = Language.kor;
         } else {
@@ -37,7 +36,6 @@ void main() {
         platformDispatcher.onLocaleChanged = () {
           final Language language;
 
-          // ignore: dead_code
           if ( /* platformDispatcher.locale.languageCode == "ko" */ true) {
             language = Language.kor;
           } else {
