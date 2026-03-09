@@ -1,6 +1,5 @@
-import 'package:http/browser_client.dart';
 import 'package:http/http.dart';
 
-// 웹에서는 브라우저 네이티브 fetch/XHR 계층을 타는 BrowserClient를 사용한다.
-Client createPlatformHttpClient() => BrowserClient();
-
+// 웹에서는 package:http의 기본 Client()가
+// 브라우저 환경에 맞는 구현을 자동으로 선택한다.
+Client createPlatformHttpClient() => Client();
