@@ -6,6 +6,10 @@ const close = MultiLanguageString(eng: "Close", kor: "닫기");
 
 const announcement = MultiLanguageString(eng: "Announcement", kor: "공지사항");
 const noAnnouncement = MultiLanguageString(eng: "There's no announcement.", kor: "공지사항이 없어요.");
+const cannotLoadAnnouncement = MultiLanguageString(
+  eng: "Cannot load announcement.",
+  kor: "공지사항을 불러올 수 없어요.",
+);
 
 const operationhours = MultiLanguageString(
   eng: "Operation Hours",
