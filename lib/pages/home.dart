@@ -124,6 +124,54 @@ class _DayOfWeekTabBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
+class _AnimatedDateTitle extends StatelessWidget {
+  const _AnimatedDateTitle({
+    required this.tabController,
+    required this.mondayOfWeek,
+    required this.language,
+  });
+
+  final TabController tabController;
+  final DateTime mondayOfWeek;
+  final Language language;
+
+  @override
+  Widget build(BuildContext context) {
+    final animation = tabController.animation;
+    if (animation == null) {
+      final theDay = mondayOfWeek.add(Duration(days: tabController.index));
+      return Text(
+        string.getLocalizedDate(theDay.month, theDay.day, language),
+        style: const TextStyle(fontWeight: FontWeight.w700),
+      );
+    }
+
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) {
+        final int displayIndex;
+        if (tabController.indexIsChanging) {
+          // 요일 탭을 직접 눌러 전환할 때는 목표 탭 날짜를 바로 보여줘서
+          // 먼 탭 이동 중 중간 날짜가 순서대로 보이지 않게 한다.
+          displayIndex = tabController.index;
+        } else {
+          // 스와이프 전환은 절반을 넘는 시점부터 다음 요일 날짜를 보여준다.
+          displayIndex = animation.value.round().clamp(
+            0,
+            DayOfWeek.values.length - 1,
+          );
+        }
+        final theDay = mondayOfWeek.add(Duration(days: displayIndex));
+
+        return Text(
+          string.getLocalizedDate(theDay.month, theDay.day, language),
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        );
+      },
+    );
+  }
+}
+
 /// 끼니(아침/점심/저녁) 페이지 전환을 담당하는 PageController.
 ///
 /// 스크롤 방향에 따라 각 페이지의 [reverse] 상태를 관리하여,
@@ -903,10 +951,6 @@ class _HomePageState extends State<HomePage>
             dayOfMealIcon = Icons.nightlight;
         }
 
-        final theDay = _mondayOfWeek.add(
-          Duration(days: _model.dayOfWeek.index),
-        );
-
         final dayOfWeekTabBar = _DayOfWeekTabBar(
           tabController: _tabController,
           language: bapu.language,
@@ -930,9 +974,10 @@ class _HomePageState extends State<HomePage>
           appBar: AppBar(
             titleSpacing: 0,
             centerTitle: false,
-            title: Text(
-              string.getLocalizedDate(theDay.month, theDay.day, bapu.language),
-              style: const TextStyle(fontWeight: FontWeight.w700),
+            title: _AnimatedDateTitle(
+              tabController: _tabController,
+              mondayOfWeek: _mondayOfWeek,
+              language: bapu.language,
             ),
             actions: [
               _MealOfDaySwitchButton(
