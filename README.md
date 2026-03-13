@@ -19,6 +19,12 @@ UNIST의 기숙사식당, 학생식당, 교직원식당 메뉴를 확인할 수 
 meal_client/
 ├── lib/
 │   ├── pages/
+│   │   ├── home/
+│   │   │   ├── home_page.dart
+│   │   │   ├── home_app_bar.dart
+│   │   │   ├── meal_card.dart
+│   │   │   ├── nested_page_scroll.dart
+│   │   │   └── week_meal_view.dart
 │   │   ├── home.dart
 │   │   └── home_drawer.dart
 │   ├── api_v2.dart
@@ -45,7 +51,12 @@ meal_client/
 ### 앱 진입점과 UI
 
 - `lib/main.dart` - 애플리케이션 진입점, 전역 provider 설정, 앱 테마 생성, `MaterialApp` 구성.
-- `lib/pages/home.dart` - 메인 화면, 날짜 탭, 끼니 전환, 중첩 스크롤 동작, 데이터 로딩, 공지 확인, 메뉴 렌더링.
+- `lib/pages/home.dart` - `home/home_page.dart`의 barrel export.
+- `lib/pages/home/home_page.dart` - 메인 화면, 데이터 로딩(FutureBuilder 체인), 공지 확인, AppBar·본문 조합.
+- `lib/pages/home/home_app_bar.dart` - AppBar 구성 위젯: 끼니 전환 버튼(`MealOfDaySwitchButton`), 요일 탭바(`DayOfWeekTabBar`), 날짜 표시 제목(`AnimatedDateTitle`).
+- `lib/pages/home/meal_card.dart` - 식당별 메뉴를 표시하는 카드 위젯(`MealCard`).
+- `lib/pages/home/nested_page_scroll.dart` - 끼니 간 페이지 전환과 내부 콘텐츠 스크롤을 통합 처리하는 커스텀 스크롤 시스템(`NestedPageScrollController`, `NestedPageScrollView`, `NestedPageScrollControllerGroup`).
+- `lib/pages/home/week_meal_view.dart` - 요일 탭뷰 및 반응형 카드 테이블 레이아웃(`WeekMealTabBarView`).
 - `lib/pages/home_drawer.dart` - 드로어(사이드바), 공지 다이얼로그, 운영 시간 섹션, 문의 링크, 라이선스 진입점.
 
 ### 상태와 도메인 모델
