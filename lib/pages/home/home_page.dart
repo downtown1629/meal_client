@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage>
       now = localNow.toUtc().add(Duration(hours: 9));
     }
 
+    // TODO: 나중에 API에서 운영 시간 정보를 받아와야함
     final MealOfDay mealOfDay;
     if (now.hour < 9 || (now.hour == 9 && now.minute <= 20)) {
       mealOfDay = MealOfDay.breakfast;

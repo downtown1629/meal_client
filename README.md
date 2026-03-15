@@ -82,3 +82,8 @@ meal_client/
 - `assets/imgs/bapu_logo.svg` - 사이드바에 들어간 로고 이미지.
 - `assets/fonts/` - Pretendard 폰트 파일과 번들된 라이선스 텍스트.
 - `test/widget_test.dart` - 테스트(테스트로써 기능은 거의 없음)
+
+## TODO
+- 다크 모드 및 영어 지원 개선
+  - Flutter에서 공식적으로 지원하는 국제화 프레임워크 및 테마 시스템으로 전환.
+- 꾹 눌러서 공유 시 햅틱 피드백 추가

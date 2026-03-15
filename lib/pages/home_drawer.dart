@@ -95,7 +95,7 @@ class _OperationHoursSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            string.operationhours.getLocalizedString(language),
+            string.operationHours.getLocalizedString(language),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -203,7 +203,7 @@ class HomePageDrawer extends StatelessWidget {
           ),
           _DrawerItem(
             icon: Icons.help_outline_outlined,
-            title: string.contactdeveloper.getLocalizedString(language),
+            title: string.contactDeveloper.getLocalizedString(language),
             onTap: () async =>
                 await launchUrl(Uri.parse("https://pf.kakao.com/_xcaYlxj")),
           ),
