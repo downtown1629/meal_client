@@ -28,6 +28,6 @@ Client createPlatformHttpClient() {
     }
   }
 
-  // macOS/Windows/Linux 등 그 밖의 네이티브 플랫폼은 기본 구현을 사용한다.
+  // 당장 지원하지 않지만 Windows/Linux 등 그 밖의 네이티브 플랫폼은 기본 구현을 사용한다.
   return _createDefaultClient();
 }

@@ -89,7 +89,13 @@ class _HomePageState extends State<HomePage>
     downloadedMeal = cachedMeal.then(
       (cache) => fetchAndCacheMealData(),
       onError: (e) => fetchAndCacheMealData(),
-    );
+    ).catchError((e) {
+      assert(() {
+        debugPrint('[BapU] meal fetch failed: $e');
+        return true;
+      }());
+      throw e;
+    });
 
     fetchRawAnnouncement().then((rawAnnouncement) async {
       const key = "announceTime";
@@ -117,9 +123,20 @@ class _HomePageState extends State<HomePage>
             );
           });
         }
-      } catch (_) {
-        // ignore
+      } catch (e) {
+        assert(() {
+          debugPrint('[BapU] announcement processing failed: $e');
+          return true;
+        }());
       }
+    // 네트워크 오류·타임아웃 등 fetchRawAnnouncement() 자체의 예외는
+    // then() 콜백 안 try/catch로 잡히지 않으므로 별도로 처리한다.
+    // 공지사항 로드 실패는 조용히 무시한다.
+    }).catchError((e) {
+      assert(() {
+        debugPrint('[BapU] announcement fetch failed: $e');
+        return true;
+      }());
     });
 
     rootBundle
