@@ -68,6 +68,14 @@ class _HomePageState extends State<HomePage>
     _tabController.index = _model.dayOfWeek.index;
     _tabController.addListener(
       () {
+        if (kDebugMode) {
+          debugPrint(
+            '[TAB/CTRL] t=${DateTime.now().toIso8601String()} '
+            'index=${_tabController.index} prev=${_tabController.previousIndex} '
+            'changing=${_tabController.indexIsChanging} '
+            'anim=${_tabController.animation?.value.toStringAsFixed(3)}',
+          );
+        }
         final nextDayOfWeek = DayOfWeek.values[_tabController.index];
         if (_model.dayOfWeek == nextDayOfWeek) {
           return;
@@ -243,6 +251,14 @@ class _HomePageState extends State<HomePage>
                       tabController: _tabController,
                       pageControllerGroup: _mealOfDayPageControllerGroup,
                       onPageChanged: (page) {
+                        if (kDebugMode) {
+                          debugPrint(
+                            '[MEAL/PAGE] t=${DateTime.now().toIso8601String()} '
+                            'page=$page '
+                            'buttonTransition=$_isMealOfDayButtonTransition '
+                            'meal=${_model.mealOfDay.name}',
+                          );
+                        }
                         if (_isMealOfDayButtonTransition) {
                           // 버튼으로 시작한 전환 중에는 중간 페이지(예: 점심)를
                           // 상단 버튼 상태에 반영하지 않는다.

@@ -1,4 +1,5 @@
 import 'package:flutter/gestures.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// 끼니(아침/점심/저녁) 페이지 전환을 담당하는 PageController.
@@ -252,6 +253,15 @@ class _NestedPageScrollViewState extends State<NestedPageScrollView> {
   /// 콘텐츠 스크롤과 페이지 전환 중 어느 동작을 수행할지 독립적으로 결정한다.
   void _handlePointerScroll(PointerScrollEvent event) {
     final dy = event.scrollDelta.dy;
+    if (kDebugMode) {
+      debugPrint(
+        '[PTR-V/RAW] t=${DateTime.now().toIso8601String()} '
+        'dx=${event.scrollDelta.dx.toStringAsFixed(2)} '
+        'dy=${dy.toStringAsFixed(2)} '
+        'page=${widget.controller.page?.toStringAsFixed(3)} '
+        'guard=$_isAnimatingPage',
+      );
+    }
     if (dy == 0 || _isAnimatingPage) return;
 
     final pageIndex = widget.controller.page!.round();
@@ -274,6 +284,15 @@ class _NestedPageScrollViewState extends State<NestedPageScrollView> {
     if (scrollableRemaining > 0) {
       // 내부 스크롤 여유 있음
       final clampedDy = dy.clamp(-scrollableRemaining, scrollableRemaining);
+      if (kDebugMode) {
+        debugPrint(
+          '[PTR-V/INNER] t=${DateTime.now().toIso8601String()} '
+          'page=$pageIndex '
+          'remaining=${scrollableRemaining.toStringAsFixed(2)} '
+          'dy=${dy.toStringAsFixed(2)} '
+          'clamped=${clampedDy.toStringAsFixed(2)}',
+        );
+      }
       sc.jumpTo(sc.offset + (reversed ? -clampedDy : clampedDy));
     } else {
       // 내부 끝 → 페이지(끼니) 전환
@@ -292,13 +311,27 @@ class _NestedPageScrollViewState extends State<NestedPageScrollView> {
         }
       }
       _isAnimatingPage = true;
+      if (kDebugMode) {
+        debugPrint(
+          '[PTR-V/PAGE] t=${DateTime.now().toIso8601String()} '
+          'from=$pageIndex to=$targetPage dy=${dy.toStringAsFixed(2)}',
+        );
+      }
       widget.controller
           .animateToPageFromScroll(
             targetPage,
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
           )
-          .then((_) => _isAnimatingPage = false);
+          .then((_) {
+            _isAnimatingPage = false;
+            if (kDebugMode) {
+              debugPrint(
+                '[PTR-V/PAGE-END] t=${DateTime.now().toIso8601String()} '
+                'page=${widget.controller.page?.toStringAsFixed(3)}',
+              );
+            }
+          });
     }
   }
 }
