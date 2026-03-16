@@ -8,10 +8,9 @@ import 'package:http/http.dart';
 // dart:io 기반 구현을 자동으로 선택한다.
 Client _createDefaultClient() => Client();
 
-// 조건부 export만으로는 iOS/Android를 직접 구분할 수 없어서,
-// IO 환경에 들어온 뒤 런타임 플랫폼 분기로 한 번 더 나눈다.
+
 Client createPlatformHttpClient() {
-  if (Platform.isIOS) {
+  if (Platform.isIOS || Platform.isMacOS) {
     // iOS에서는 NSURLSession 기반 구현을 사용한다.
     return CupertinoClient.defaultSessionConfiguration();
   }
@@ -19,11 +18,9 @@ Client createPlatformHttpClient() {
   if (Platform.isAndroid) {
     try {
       // Android에서는 Cronet을 우선 사용해 네트워크 스택을 최적화한다.
-      final engine = CronetEngine.build(
-        cacheMode: CacheMode.memory,
-        cacheMaxSize: 2 * 1024 * 1024,
-      );
-      return CronetClient.fromCronetEngine(engine, closeEngine: true);
+      // data.dart에 구현된 디스크 캐시를 사용하기 때문에, 캐시는 비활성화한다.
+      final engine = CronetEngine.build(cacheMode: CacheMode.disabled);
+      return CronetClient.fromCronetEngine(engine);
     } catch (_) {
       // Google Play 서비스가 없거나 Cronet 엔진 초기화에 실패하면
       // package:http의 기본 네이티브 클라이언트로 안전하게 폴백한다.
