@@ -127,11 +127,19 @@ class AnimatedDateTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 이 위젯은 언어 변경·주 변경 시에만 rebuild된다.
+    // 7개 날짜 문자열을 미리 계산해두면, 아래 AnimatedBuilder가
+    // 매 프레임(~60fps)마다 DateTime 연산 + 문자열 포맷을 반복하지 않고
+    // 단순 리스트 인덱스 조회만 수행한다.
+    final dateLabels = List.generate(DayOfWeek.values.length, (i) {
+      final day = mondayOfWeek.add(Duration(days: i));
+      return string.getLocalizedDate(day.month, day.day, language);
+    });
+
     final animation = tabController.animation;
     if (animation == null) {
-      final theDay = mondayOfWeek.add(Duration(days: tabController.index));
       return Text(
-        string.getLocalizedDate(theDay.month, theDay.day, language),
+        dateLabels[tabController.index],
         style: const TextStyle(fontWeight: FontWeight.w700),
       );
     }
@@ -151,10 +159,10 @@ class AnimatedDateTitle extends StatelessWidget {
             DayOfWeek.values.length - 1,
           );
         }
-        final theDay = mondayOfWeek.add(Duration(days: displayIndex));
 
+        // DateTime 연산·문자열 포맷 없이 미리 계산된 레이블만 조회한다.
         return Text(
-          string.getLocalizedDate(theDay.month, theDay.day, language),
+          dateLabels[displayIndex],
           style: const TextStyle(fontWeight: FontWeight.w700),
         );
       },

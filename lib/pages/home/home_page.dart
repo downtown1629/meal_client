@@ -201,14 +201,11 @@ class _HomePageState extends State<HomePage>
                       activeIndex: _model.dayOfWeek.index,
                     );
                   } finally {
-                    if (mounted) {
-                      setState(() {
-                        // 애니메이션이 끝나면 중간 페이지 무시 상태만 해제한다.
-                        _isMealOfDayButtonTransition = false;
-                      });
-                    } else {
-                      _isMealOfDayButtonTransition = false;
-                    }
+                    // _isMealOfDayButtonTransition은 build()가 아닌
+                    // onPageChanged 콜백에서만 읽힌다. 콜백은 this를 캡처하여
+                    // 호출 시점의 필드 값을 직접 읽으므로, setState 없이
+                    // 해제해도 렌더링에 영향이 없다.
+                    _isMealOfDayButtonTransition = false;
                   }
                 },
                 label: dayOfMealLabel,
