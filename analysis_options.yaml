@@ -30,3 +30,5 @@ linter:
 analyzer:
   errors:
     dead_code: info
+  exclude:
+    - "**/*.md"
