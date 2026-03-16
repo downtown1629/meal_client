@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../i18n.dart';
@@ -150,16 +149,6 @@ class AnimatedDateTitle extends StatelessWidget {
           displayIndex = animation.value.round().clamp(
             0,
             DayOfWeek.values.length - 1,
-          );
-        }
-        if (kDebugMode) {
-          debugPrint(
-            '[APPBAR/DATE] t=${DateTime.now().toIso8601String()} '
-            'display=$displayIndex '
-            'index=${tabController.index} '
-            'prev=${tabController.previousIndex} '
-            'changing=${tabController.indexIsChanging} '
-            'anim=${animation.value.toStringAsFixed(3)}',
           );
         }
         final theDay = mondayOfWeek.add(Duration(days: displayIndex));
