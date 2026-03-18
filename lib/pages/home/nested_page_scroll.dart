@@ -131,6 +131,14 @@ class _NestedPageScrollViewState extends State<NestedPageScrollView> {
   }
 
   @override
+  void dispose() {
+    for (var controller in scrollControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Listener(
       onPointerSignal: (event) {

@@ -20,8 +20,8 @@ Future<String> _fetchRawString(String url) async {
   return response.body;
 }
 
-Future<String> fetchRawMeal() async =>
-    await _fetchRawString("https://meal.hexa.pro/mainpage/data");
+Future<String> fetchRawMeal() =>
+    _fetchRawString("https://meal.hexa.pro/mainpage/data");
 
 WeekMeal parseRawMeal(String jsonStr) {
   final weekMeal = WeekMeal.empty();
@@ -102,8 +102,8 @@ WeekMeal parseRawMeal(String jsonStr) {
   return weekMeal;
 }
 
-Future<String> fetchRawAnnouncement() async =>
-    await _fetchRawString("https://meal.hexa.pro/notice");
+Future<String> fetchRawAnnouncement() =>
+    _fetchRawString("https://meal.hexa.pro/notice");
 
 String parseRawAnnouncement(String rawAnnouncement) {
   final map = jsonDecode(rawAnnouncement) as Map<String, dynamic>;

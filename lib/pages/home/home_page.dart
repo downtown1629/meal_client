@@ -153,6 +153,13 @@ class _HomePageState extends State<HomePage>
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    _mealOfDayPageControllerGroup.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<BapUModel>(
       builder: (context, bapu, child) {

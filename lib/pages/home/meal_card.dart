@@ -24,8 +24,7 @@ class MealCard extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       elevation: 0,
-      child: Flex(
-        direction: Axis.vertical,
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -61,10 +60,9 @@ class MealCard extends StatelessWidget {
                 ),
               );
             } else {
-              return Text(
-                "",
-                style: theme.textTheme.bodyMedium!.copyWith(height: 0.6),
-              );
+              // SizedBox is cheaper than laying out an empty Text widget
+              final fontSize = theme.textTheme.bodyMedium!.fontSize ?? 14;
+              return SizedBox(height: fontSize * 0.6);
             }
           }, growable: false),
           const SizedBox(height: 8),
