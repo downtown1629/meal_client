@@ -20,8 +20,8 @@ class MealCard extends StatelessWidget {
 
     final menuWidgets = <Widget>[];
     for (final menuItem in meal.menu) {
-      // Flutter Text의 자동 줄 바꿈에서는 줄 간격(height)을 항목 사이마다
-      // 독립적으로 제어할 수 없어서, 메뉴 항목 간 여백은 SizedBox로 분리해 넣는다.
+      // Flutter Text는 자동 줄 바꿈과 강제 줄 바꿈의 줄 간격(height)을
+      // 구분하지 않아서, 메뉴 항목 간 여백은 SizedBox로 분리해 넣는다.
       if (menuWidgets.isNotEmpty) {
         menuWidgets.add(SizedBox(height: menuLineGap));
       }
