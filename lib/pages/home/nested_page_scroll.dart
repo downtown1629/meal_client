@@ -245,6 +245,14 @@ class _NestedPageScrollViewState extends State<NestedPageScrollView> {
     );
   }
 
+  @override
+  void dispose() {
+    for (final controller in scrollControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
   /// 마우스 휠·터치패드의 [PointerScrollEvent]를 처리한다.
   ///
   /// 터치 드래그([GestureDetector])와 달리 연속적인 세션이 없으므로,
