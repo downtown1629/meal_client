@@ -16,10 +16,12 @@ class MealCard extends StatelessWidget {
     final primaryHsl = HSLColor.fromColor(theme.colorScheme.primaryContainer);
     final isLight = theme.brightness == Brightness.light;
     final menuTextStyle = theme.textTheme.bodyMedium!.copyWith(height: 1.1);
-    final menuLineGap = (menuTextStyle.fontSize ?? 14.0) * 0.6;
+    final menuLineGap = (menuTextStyle.fontSize ?? 14.0) * 0.65;
 
     final menuWidgets = <Widget>[];
     for (final menuItem in meal.menu) {
+      // Flutter Text의 자동 줄 바꿈에서는 줄 간격(height)을 항목 사이마다
+      // 독립적으로 제어할 수 없어서, 메뉴 항목 간 여백은 SizedBox로 분리해 넣는다.
       if (menuWidgets.isNotEmpty) {
         menuWidgets.add(SizedBox(height: menuLineGap));
       }
