@@ -16,6 +16,8 @@ class BapUModel extends ChangeNotifier {
   Brightness get themeBrightness => _themeBrightness;
 
   void changeLanguage(Language language) {
+    if (_language == language) return;
+
     _language = language;
 
     notifyListeners();
