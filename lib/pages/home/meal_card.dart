@@ -15,6 +15,21 @@ class MealCard extends StatelessWidget {
     // primaryContainer의 HSL 변환을 한 번만 수행하여 중복 계산 방지
     final primaryHsl = HSLColor.fromColor(theme.colorScheme.primaryContainer);
     final isLight = theme.brightness == Brightness.light;
+    final menuTextStyle = theme.textTheme.bodyMedium!.copyWith(height: 1.1);
+    final menuLineGap = (menuTextStyle.fontSize ?? 14.0) * 0.6;
+
+    final menuWidgets = <Widget>[];
+    for (final menuItem in meal.menu) {
+      if (menuWidgets.isNotEmpty) {
+        menuWidgets.add(SizedBox(height: menuLineGap));
+      }
+      menuWidgets.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(menuItem, style: menuTextStyle),
+        ),
+      );
+    }
 
     return Card.filled(
       color: theme.colorScheme.surfaceContainer,
@@ -24,8 +39,7 @@ class MealCard extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       elevation: 0,
-      child: Flex(
-        direction: Axis.vertical,
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -51,22 +65,7 @@ class MealCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          ...List.generate(meal.menu.length * 2 - 1, (index) {
-            if (index.isEven) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  meal.menu[index ~/ 2],
-                  style: theme.textTheme.bodyMedium!.copyWith(height: 1.1),
-                ),
-              );
-            } else {
-              return Text(
-                "",
-                style: theme.textTheme.bodyMedium!.copyWith(height: 0.6),
-              );
-            }
-          }, growable: false),
+          ...menuWidgets,
           const SizedBox(height: 8),
           Flexible(
             child: Align(
