@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../i18n.dart';
@@ -74,6 +75,7 @@ class WeekMealTabBarView extends StatelessWidget {
 
                           return GestureDetector(
                             onLongPress: () {
+                              HapticFeedback.lightImpact();
                               SharePlus.instance.share(
                                 ShareParams(
                                   text:
