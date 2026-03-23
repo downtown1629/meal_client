@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +9,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../i18n.dart';
 import '../model.dart';
 import '../string.dart' as string;
+
+Future<void>? _fontLicenseRegistrationFuture;
 
 class HomeAnnouncementDialog extends StatelessWidget {
   final String close;
@@ -224,11 +228,24 @@ class HomePageDrawer extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: IconButton(
                   icon: Icon(Icons.copyright, color: Colors.white),
-                  onPressed: () => showLicensePage(
-                    context: context,
-                    applicationLegalese:
-                        "GPL-2.0 license. Source code: https://github.com/HeXA-UNIST/meal_client",
-                  ),
+                  onPressed: () async {
+                    await (_fontLicenseRegistrationFuture ??=
+                        rootBundle.loadString('assets/fonts/Pretendard-License.txt').then((fontLicense) {
+                          LicenseRegistry.addLicense(
+                            () => Stream<LicenseEntry>.value(
+                              LicenseEntryWithLineBreaks(['Pretendard'], fontLicense),
+                            ),
+                          );
+                        }));
+                    if (!context.mounted) {
+                      return;
+                    }
+                    showLicensePage(
+                      context: context,
+                      applicationLegalese:
+                          "GPL-2.0 license. Source code: https://github.com/HeXA-UNIST/meal_client",
+                    );
+                  },
                 ),
               ),
             ),
@@ -238,4 +255,3 @@ class HomePageDrawer extends StatelessWidget {
     );
   }
 }
-
