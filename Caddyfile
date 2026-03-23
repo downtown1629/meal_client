@@ -8,7 +8,7 @@
 # Cloudflare Tunnel should forward to this origin, for example:
 # service: http://localhost:8080
 :8080 {
-	root * C:/Users/min/StudioProjects/meal_client/build/web
+	root * ./build/web
 
 	# Compress static assets.
 	encode zstd gzip
