@@ -101,10 +101,12 @@ class _HomePageState extends State<HomePage>
       try {
         final announcement = parseRawAnnouncement(rawAnnouncement);
         final sharedPreferences = await SharedPreferences.getInstance();
+        if (!mounted) return;
         final prevAnnouncement = sharedPreferences.getString(key);
         if (announcement != prevAnnouncement) {
           sharedPreferences.setString(key, announcement);
           SchedulerBinding.instance.addPostFrameCallback((duration) {
+            if (!mounted) return;
             showDialog(
               context: context,
               barrierDismissible: false,
