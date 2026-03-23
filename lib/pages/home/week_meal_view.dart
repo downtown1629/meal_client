@@ -45,47 +45,43 @@ class WeekMealTabBarView extends StatelessWidget {
             return SafeArea(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  final cards = [nowMeal.dormitory, nowMeal.student, nowMeal.faculty]
+                  final cards = Cafeteria.values
                       .map<Iterable<Widget>>(
-                        (meals) => meals.map((meal) {
-                          var title = "";
-
-                          if (meals == nowMeal.dormitory) {
-                            title = string.dormitoryCafeteria
-                                .getLocalizedString(language);
+                        (cafeteria) {
+                          final meals = nowMeal.fromCafeteria(cafeteria);
+                          return meals.map((meal) {
+                            var title = switch (cafeteria) {
+                              Cafeteria.dormitory => string.dormitoryCafeteria.getLocalizedString(language),
+                              Cafeteria.student   => string.studentCafeteria.getLocalizedString(language),
+                              Cafeteria.faculty   => string.facultyCafeteria.getLocalizedString(language),
+                            };
 
                             // 한식, 할랄 표기는 기숙사 식당에 한정하여 표기한다.
-                            switch (meal) {
-                              case KoreanMeal _:
-                                title +=
-                                " ${string.menuKorean.getLocalizedString(language)}";
-                              case HalalMeal _:
-                                title +=
-                                " ${string.menuHalal.getLocalizedString(language)}";
+                            if (cafeteria == Cafeteria.dormitory) {
+                              switch (meal) {
+                                case KoreanMeal _:
+                                  title +=
+                                  " ${string.menuKorean.getLocalizedString(language)}";
+                                case HalalMeal _:
+                                  title +=
+                                  " ${string.menuHalal.getLocalizedString(language)}";
+                              }
                             }
-                          } else if (meals == nowMeal.student) {
-                            title = string.studentCafeteria.getLocalizedString(
-                              language,
-                            );
-                          } else if (meals == nowMeal.faculty) {
-                            title = string.facultyCafeteria.getLocalizedString(
-                              language,
-                            );
-                          }
 
-                          return GestureDetector(
-                            onLongPress: () {
-                              HapticFeedback.lightImpact();
-                              SharePlus.instance.share(
-                                ShareParams(
-                                  text:
-                                      "[$title]\n${meal.menu.map((aMenu) => "- $aMenu").join("\n")}${meal.kcal == null ? "" : "\n\n${meal.kcal} kcal"}",
-                                ),
-                              );
-                            },
-                            child: MealCard(title: title, meal: meal),
-                          );
-                        }),
+                            return GestureDetector(
+                              onLongPress: () {
+                                HapticFeedback.lightImpact();
+                                SharePlus.instance.share(
+                                  ShareParams(
+                                    text:
+                                        "[$title]\n${meal.menu.map((aMenu) => "- $aMenu").join("\n")}${meal.kcal == null ? "" : "\n\n${meal.kcal} kcal"}",
+                                  ),
+                                );
+                              },
+                              child: MealCard(title: title, meal: meal),
+                            );
+                          });
+                        },
                       )
                       .expand((e) => e)
                       .toList(growable: true);
